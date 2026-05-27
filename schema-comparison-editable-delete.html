@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Schema comparison table</title>
+<style>
+:root{--bg:#f7f6f2;--surface:#ffffff;--text:#241f18;--muted:#6d655a;--border:#d9d3c8;--header:#efe9dd;--row:#fbfaf7;--accent1:#01696f;--accent2:#0b5177;--accent3:#437a22;--accent4:#964219;--accent5:#7a39bb;--accent6:#aa6b00}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.4}
+.wrap{max-width:1600px;margin:0 auto;padding:24px}
+h1{margin:0 0 8px;font-size:32px} p{margin:0 0 18px;color:var(--muted);max-width:90ch}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;min-width:1450px} thead th{position:sticky;top:0;background:var(--header);z-index:2}
+th,td{border-bottom:1px solid var(--border);padding:12px 10px;vertical-align:top;text-align:left;font-size:14px} th{font-weight:700}
+tr:nth-child(even) td{background:var(--row)}
+.concept{font-weight:700;white-space:nowrap}
+.short{color:var(--muted);max-width:320px}
+.schema{display:block;padding:6px 8px;border-radius:10px;margin:2px 0 6px 0;background:#f5f2ea}
+.schema.gfzd{border-left:5px solid var(--accent1)}
+.schema.gfzr{border-left:5px solid var(--accent2)}
+.schema.gfzs{border-left:5px solid var(--accent3)}
+.schema.arc{border-left:5px solid var(--accent4)}
+.schema.hsr{border-left:5px solid var(--accent5)}
+.schema.terra{border-left:5px solid var(--accent6)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 18px}
+.tag{padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);font-size:13px}
+.direct{background:#e9f5f5}.partial{background:#f4ecfb}.unique{background:#fff4e3}.na{background:#f4f1ea;color:var(--muted)}
+.small{font-size:12px;color:var(--muted)}
+
+/* Sticky first two columns */
+thead th:nth-child(1),
+tbody td:nth-child(1){
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: var(--surface);
+}
+
+thead th:nth-child(2),
+tbody td:nth-child(2){
+  position: sticky;
+  left: 180px;
+  z-index: 3;
+  background: var(--surface);
+}
+
+/* Header layering */
+thead th:nth-child(1),
+thead th:nth-child(2){
+  z-index: 5;
+  background: var(--header);
+}
+
+/* Preserve striped rows */
+tbody tr:nth-child(even) td:nth-child(1),
+tbody tr:nth-child(even) td:nth-child(2){
+  background: var(--row);
+}
+
+/* Visual separator */
+tbody td:nth-child(2),
+thead th:nth-child(2){
+  box-shadow: 2px 0 0 var(--border);
+}
+
+
+/* Editable input row */
+.input-row input,
+.input-row textarea,
+.input-row select{
+  width:100%;
+  padding:8px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font:inherit;
+  background:#fff;
+}
+
+.input-row td{
+  background:#fffdf8;
+}
+
+.controls{
+  margin:16px 0;
+  display:flex;
+  gap:10px;
+}
+
+.controls button{
+  padding:10px 14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#fff;
+  cursor:pointer;
+}
+
+.custom-row td{
+  background:#eef8ff !important;
+}
+
+
+.delete-btn{
+  padding:6px 10px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.delete-btn:hover{
+  background:#f8eaea;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Schema comparison table</h1>
+<p>This page makes the shared concepts easy to scan. Each schema column is color-coded so readers can quickly see which fields belong together and where the matches are direct, partial, or absent.</p>
+<div class="legend">
+<span class="tag direct">Direct match</span>
+<span class="tag partial">Partial match</span>
+<span class="tag unique">Unique / schema-specific</span>
+<span class="tag na">No field</span>
+</div>
+<div class="controls"><button id="addRowBtn">Add record</button></div><div class="card table-wrap">
+<table>
+<thead>
+<tr>
+<th style="width:180px;">Concept</th>
+<th style="width:260px;">Short description</th>
+<th>GFZ descriptive</th>
+<th>GFZ registration</th>
+<th>GFZ supplemental</th>
+<th>Archaeology</th>
+<th>HSR sample</th>
+<th>TerraLID</th>
+<th style="width:110px;">Match</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="concept">Primary identifier</td>
+<td class="short">Main ID that uniquely identifies the sample or resource.</td>
+<td><span class="schema gfzd">identifier.value / identifier.type</span></td>
+<td><span class="schema gfzr">sampleNumber.value / sampleNumber.identifierType</span></td>
+<td><span class="schema gfzs">igsn</span></td>
+<td><span class="schema arc">agencyIdentifier / otherIdentifier</span></td>
+<td><span class="schema hsr">id</span></td>
+<td><span class="schema terra">terralid_sample_id</span></td>
+<td class="direct">Direct</td>
+</tr>
+<tr>
+<td class="concept">Resource / sample type</td>
+<td class="short">Controlled term for what kind of sample or object it is.</td>
+<td><span class="schema gfzd">type</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">sample_type</span></td>
+<td><span class="schema arc">sampleMaterialType</span></td>
+<td><span class="schema hsr">types.resourceType</span></td>
+<td><span class="schema terra">sample_type</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Local name / title</td>
+<td class="short">Human-readable label used to recognize the item.</td>
+<td><span class="schema gfzd">name</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">name</span></td>
+<td><span class="schema arc">sampleTitle</span></td>
+<td><span class="schema hsr">titles.title</span></td>
+<td><span class="schema terra na">—</span></td>
+<td class="direct">Direct</td>
+</tr>
+<tr>
+<td class="concept">Alternate IDs</td>
+<td class="short">Other identifiers or labels used for the same item.</td>
+<td><span class="schema gfzd">alternateIdentifiers</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">parent_igsn is a parent link</span></td>
+<td><span class="schema arc">otherIdentifier</span></td>
+<td><span class="schema hsr">alternateIdentifiers</span></td>
+<td><span class="schema terra">sample_identifiers.sample_id_lab, sample_identifiers.sample_pid</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Parent / source link</td>
+<td class="short">Link to parent sample or source object.</td>
+<td><span class="schema gfzd">parentIdentifier</span></td>
+<td><span class="schema gfzr">relatedResourceIdentifiers with isPartOf</span></td>
+<td><span class="schema gfzs">parent_igsn</span></td>
+<td><span class="schema arc">relations</span></td>
+<td><span class="schema hsr">sampleSource.sourceId, relatedIdentifiers</span></td>
+<td><span class="schema terra">sample_relation</span></td>
+<td class="direct">Direct</td>
+</tr>
+<tr>
+<td class="concept">Related records</td>
+<td class="short">Links to samples, datasets, or publications.</td>
+<td><span class="schema gfzd">relatedIdentifiers</span></td>
+<td><span class="schema gfzr">relatedResourceIdentifiers.relatedResourceIdentifier</span></td>
+<td><span class="schema gfzs">relatedIdentifiers</span></td>
+<td><span class="schema arc">relations</span></td>
+<td><span class="schema hsr">relatedIdentifiers, documentationIdentifier</span></td>
+<td><span class="schema terra">sample_relation</span></td>
+<td class="direct">Direct</td>
+</tr>
+<tr>
+<td class="concept">Creator / collector / registrar</td>
+<td class="short">Person or organization responsible for creating, collecting, or registering.</td>
+<td><span class="schema gfzd">collector, registrant</span></td>
+<td><span class="schema gfzr">registrant</span></td>
+<td><span class="schema gfzs">sampled_by</span></td>
+<td><span class="schema arc">collectorExcavator, publisher</span></td>
+<td><span class="schema hsr">creators, custodian, publisher</span></td>
+<td><span class="schema terra">samplecreator</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Collection date</td>
+<td class="short">Date when the sample was taken or collected.</td>
+<td><span class="schema gfzd">samplingdate</span></td>
+<td><span class="schema gfzr">log.logElement.timeStamp only for admin events</span></td>
+<td><span class="schema gfzs">publish_date is not collection date</span></td>
+<td><span class="schema arc">collectionDate</span></td>
+<td><span class="schema hsr">dates.collectedDate, collectionTime</span></td>
+<td><span class="schema terra">sample_date</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Location</td>
+<td class="short">Where the sample was collected or currently located.</td>
+<td><span class="schema gfzd">geo_location, physiographicfeature, politicalgeography</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">geo_location</span></td>
+<td><span class="schema arc">project.siteLocation.*</span></td>
+<td><span class="schema hsr">geoLocations</span></td>
+<td><span class="schema terra">sample_location</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Material</td>
+<td class="short">Substance or composition of the sample.</td>
+<td><span class="schema gfzd">material</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">material</span></td>
+<td><span class="schema arc">sampleMaterialType</span></td>
+<td><span class="schema hsr">materialTerms, materials.material</span></td>
+<td><span class="schema terra">sample_material</span></td>
+<td class="direct">Direct</td>
+</tr>
+<tr>
+<td class="concept">Physical properties</td>
+<td class="short">Measurements such as size, weight, depth, or age.</td>
+<td><span class="schema gfzd">sizeinfo, length, lengthunit</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">core_depth, size_info, age_info</span></td>
+<td><span class="schema arc">sampleDepth, sampleWeight</span></td>
+<td><span class="schema hsr">sizes</span></td>
+<td><span class="schema terra">sample_weight</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Purpose / objective</td>
+<td class="short">Why the sample was collected.</td>
+<td><span class="schema gfzd">samplepurpose, purpose</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">sample_purpose</span></td>
+<td><span class="schema arc">project/sample context fields</span></td>
+<td><span class="schema hsr">otherDescriptions, sampleSource.sampleSiteDescription</span></td>
+<td><span class="schema terra">sample_objective</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Access / status</td>
+<td class="short">Public, private, storage, or restriction information.</td>
+<td><span class="schema gfzd">isprivate, sampleAccess</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">is_private</span></td>
+<td><span class="schema arc">currentStatus.accessType, currentStatus.accessConditions</span></td>
+<td><span class="schema hsr">sampleAccess</span></td>
+<td><span class="schema terra">samplestatus.statusAccessibility</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Description</td>
+<td class="short">Free text that adds context not captured elsewhere.</td>
+<td><span class="schema gfzd">descriptions, samplecomment</span></td>
+<td><span class="schema gfzr">log.logElement.comment</span></td>
+<td><span class="schema gfzs">description</span></td>
+<td><span class="schema arc">description, project.projectDescription, contextDescription</span></td>
+<td><span class="schema hsr">otherDescriptions, sampleDescription</span></td>
+<td><span class="schema terra">sample_description</span></td>
+<td class="direct">Direct</td>
+</tr>
+<tr>
+<td class="concept">Keywords / subjects</td>
+<td class="short">Search terms or subject labels for discovery.</td>
+<td><span class="schema gfzd">classificationinfo, fieldname</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">classification_info</span></td>
+<td><span class="schema arc">keywords, generalKeywords, subject</span></td>
+<td><span class="schema hsr">subjects, materialTerms</span></td>
+<td><span class="schema terra na">—</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr>
+<td class="concept">Method</td>
+<td class="short">How the sample was collected, produced, or analyzed.</td>
+<td><span class="schema gfzd">methods, collectioninfo.collectionmethod</span></td>
+<td><span class="schema gfzr na">—</span></td>
+<td><span class="schema gfzs">methods</span></td>
+<td><span class="schema arc">collectionMethod</span></td>
+<td><span class="schema hsr">collectionMethods.collectionMethod</span></td>
+<td><span class="schema terra">sample_method</span></td>
+<td class="direct">Direct</td>
+</tr>
+<tr>
+<td class="concept">Provenance / context</td>
+<td class="short">Background about source, site, expedition, or registry history.</td>
+<td><span class="schema gfzd">expeditioninfo, archiveinfo, launchinfo</span></td>
+<td><span class="schema gfzr">log</span></td>
+<td><span class="schema gfzs">user_code, expedition, sample_request</span></td>
+<td><span class="schema arc">project, investigationType, investigationDates, siteOwner</span></td>
+<td><span class="schema hsr">sampleSource, fundingReferences, custodian</span></td>
+<td><span class="schema terra">sample_laboratory, samplestatus</span></td>
+<td class="partial">Partial</td>
+</tr>
+<tr class="input-row"><td><input placeholder="Enter Concept" type="text"/></td><td><input placeholder="Enter Short description" type="text"/></td><td><input placeholder="Enter GFZ descriptive" type="text"/></td><td><input placeholder="Enter GFZ registration" type="text"/></td><td><input placeholder="Enter GFZ supplemental" type="text"/></td><td><input placeholder="Enter Archaeology" type="text"/></td><td><input placeholder="Enter HSR sample" type="text"/></td><td><input placeholder="Enter TerraLID" type="text"/></td><td><select><option value="Direct">Direct</option><option value="Partial">Partial</option><option value="Unique">Unique</option><option value="No field">No field</option></select></td></tr></tbody>
+</table>
+</div>
+<p class="small">Tip: use the colored schema chips to trace each concept across columns. Darker chips indicate schema-specific wording, while the match label shows whether the concept is direct or partial.</p>
+</div>
+<script>
+document.getElementById('addRowBtn').addEventListener('click', function(){
+
+  const tbody = document.querySelector('tbody');
+  const inputRow = document.querySelector('.input-row');
+
+  const values = [];
+
+  inputRow.querySelectorAll('input, select').forEach(el => {
+    values.push(el.value.trim());
+  });
+
+  if(values.every(v => v === '')){
+    alert('Please enter at least one value.');
+    return;
+  }
+
+  const tr = document.createElement('tr');
+  tr.className = 'custom-row';
+
+  values.forEach((value, index) => {
+    const td = document.createElement('td');
+
+    if(index === 0){
+      td.classList.add('concept');
+    }
+
+    if(index === 1){
+      td.classList.add('short');
+    }
+
+    td.textContent = value || '—';
+
+    tr.appendChild(td);
+  });
+
+  // Add delete button in final column
+  const deleteTd = tr.lastElementChild;
+
+  deleteTd.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <span>${deleteTd.textContent}</span>
+      <button class="delete-btn">Delete</button>
+    </div>
+  `;
+
+  deleteTd.querySelector('.delete-btn').addEventListener('click', function(){
+    tr.remove();
+  });
+
+  tbody.insertBefore(tr, inputRow);
+
+  inputRow.querySelectorAll('input').forEach(el => el.value = '');
+  inputRow.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+});
+</script></body>
+</html>
